@@ -1,1848 +1,933 @@
-
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Fulfillment Center Training Game</title>
-
     <style>
-
         * {
-
             margin: 0;
-
             padding: 0;
-
             box-sizing: border-box;
-
         }
-
- 
 
         body {
-
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-
             background: linear-gradient(135deg, #232F3E 0%, #FF9900 100%);
-
             min-height: 100vh;
-
             color: #333;
-
         }
-
- 
 
         .container {
-
             max-width: 1400px;
-
             margin: 0 auto;
-
             padding: 20px;
-
         }
-
- 
 
         .header {
-
             text-align: center;
-
             background: white;
-
             padding: 30px;
-
             border-radius: 20px;
-
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-
             margin-bottom: 30px;
-
             border: 3px solid #FF9900;
-
         }
-
- 
 
         .header h1 {
-
             color: #232F3E;
-
             font-size: 2.8em;
-
             margin-bottom: 10px;
-
             display: flex;
-
             align-items: center;
-
             justify-content: center;
-
             gap: 15px;
-
         }
-
- 
 
         .header p {
-
             color: #666;
-
             font-size: 1.2em;
-
         }
-
- 
 
         .stats-dashboard {
-
             display: grid;
-
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-
             gap: 15px;
-
             margin-bottom: 30px;
-
         }
-
- 
 
         .stat-card {
-
             background: white;
-
             padding: 20px;
-
             border-radius: 12px;
-
             text-align: center;
-
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-
             border-left: 4px solid #FF9900;
-
         }
-
- 
 
         .stat-number {
-
             font-size: 2em;
-
             font-weight: bold;
-
             color: #232F3E;
-
         }
-
- 
 
         .stat-label {
-
             color: #666;
-
             font-size: 0.9em;
-
             margin-top: 5px;
-
         }
-
- 
 
         .game-area {
-
             background: white;
-
             border-radius: 20px;
-
             padding: 30px;
-
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-
             margin-bottom: 20px;
-
         }
-
- 
 
         .game-header {
-
             display: flex;
-
             justify-content: space-between;
-
             align-items: center;
-
             margin-bottom: 25px;
-
             flex-wrap: wrap;
-
             gap: 15px;
-
         }
-
- 
 
         .game-title {
-
             font-size: 1.8em;
-
             color: #232F3E;
-
             display: flex;
-
             align-items: center;
-
             gap: 10px;
-
         }
 
- 
+        .difficulty-selector {
+            display: flex;
+            gap: 10px;
+        }
 
- 
+        .difficulty-btn {
+            padding: 8px 16px;
+            border: 2px solid #FF9900;
+            background: white;
+            color: #FF9900;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
 
- 
+        .difficulty-btn.active {
+            background: #FF9900;
+            color: white;
+        }
 
         .stowing-area {
-
             display: grid;
-
             grid-template-columns: 1fr 400px;
-
             gap: 30px;
-
             margin-bottom: 25px;
-
         }
-
- 
 
         .conveyor-belt {
-
             background: linear-gradient(90deg, #444 0%, #666 50%, #444 100%);
-
             height: 120px;
-
             border-radius: 10px;
-
             position: relative;
-
             overflow: hidden;
-
             border: 3px solid #333;
-
         }
-
- 
 
         .product-item {
-
             position: absolute;
-
             top: 50%;
-
             transform: translateY(-50%);
-
             background: white;
-
             padding: 15px;
-
             border-radius: 8px;
-
             box-shadow: 0 3px 10px rgba(0,0,0,0.3);
-
             display: flex;
-
             align-items: center;
-
             gap: 10px;
-
             font-weight: bold;
-
             color: #333;
-
             min-width: 200px;
-
             animation: moveConveyor 8s linear infinite;
-
         }
-
- 
 
         @keyframes moveConveyor {
-
             from { left: -250px; }
-
             to { left: 100%; }
-
         }
-
- 
 
         .product-emoji {
-
             font-size: 2em;
-
         }
-
- 
 
         .product-info {
-
             flex: 1;
-
         }
-
- 
 
         .product-name {
-
             font-size: 1.1em;
-
             margin-bottom: 3px;
-
         }
-
- 
 
         .product-id {
-
             font-size: 0.8em;
-
             color: #666;
-
         }
-
- 
 
         .pod-container {
-
             display: flex;
-
             justify-content: center;
-
         }
-
- 
 
         .pod {
-
             display: grid;
-
             grid-template-columns: repeat(4, 90px);
-
             grid-template-rows: repeat(6, 70px);
-
             gap: 3px;
-
             background: #333;
-
             padding: 15px;
-
             border-radius: 15px;
-
             box-shadow: 0 8px 25px rgba(0,0,0,0.2);
-
         }
-
- 
 
         .bin {
-
-            background: #f8f9fa;
-
+            background: #FFCC00;
             border: 3px solid #dee2e6;
-
             display: flex;
-
             flex-direction: column;
-
             align-items: center;
-
             justify-content: center;
-
             font-weight: bold;
-
             font-size: 0.9em;
-
             cursor: pointer;
-
             transition: all 0.3s ease;
-
             position: relative;
-
             border-radius: 8px;
-
         }
-
- 
 
         .bin:hover {
-
             background: #e9ecef;
-
             transform: scale(1.05);
-
             border-color: #FF9900;
-
         }
-
- 
 
         .bin.occupied {
-
-            background: #E3F2FD;
-
-            border-color: #2196F3;
-
+            background: #FFCC00;
+            border-color: #dee2e6;
             color: #1976D2;
-
         }
-
- 
 
         .bin.target {
-
             background: #FFF3E0;
-
             border-color: #FF9900;
-
             color: #F57C00;
-
             animation: targetPulse 1.5s ease-in-out infinite;
-
         }
-
- 
 
         .bin.correct {
-
             background: #E8F5E8;
-
             border-color: #4CAF50;
-
             color: #2E7D32;
-
             animation: successPulse 0.6s ease;
-
         }
-
- 
 
         .bin.incorrect {
-
             background: #FFEBEE;
-
             border-color: #f44336;
-
             color: #C62828;
-
             animation: errorShake 0.6s ease;
-
         }
-
- 
 
         @keyframes targetPulse {
-
             0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 153, 0, 0.7); }
-
             50% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(255, 153, 0, 0); }
-
         }
-
- 
 
         @keyframes successPulse {
-
             0% { transform: scale(1); }
-
             50% { transform: scale(1.15); }
-
             100% { transform: scale(1); }
-
         }
-
- 
 
         @keyframes errorShake {
-
             0%, 100% { transform: translateX(0); }
-
             25% { transform: translateX(-8px); }
-
             75% { transform: translateX(8px); }
-
         }
-
- 
 
         .bin-label {
-
             font-size: 0.8em;
-
             font-weight: bold;
-
         }
-
- 
 
         .bin-content {
-
             font-size: 1.2em;
-
             margin-top: 2px;
-
         }
-
- 
 
         .game-controls {
-
             display: flex;
-
             justify-content: space-between;
-
             align-items: center;
-
             flex-wrap: wrap;
-
             gap: 15px;
-
             margin-top: 25px;
-
         }
-
- 
 
         .timer-display {
-
             font-size: 1.5em;
-
             font-weight: bold;
-
             color: #232F3E;
-
             background: #f8f9fa;
-
             padding: 10px 20px;
-
             border-radius: 25px;
-
             border: 2px solid #FF9900;
-
         }
-
- 
 
         .timer-display.warning {
-
             background: #FFF3CD;
-
             border-color: #FFC107;
-
             color: #856404;
-
             animation: timerBlink 1s ease-in-out infinite;
-
         }
-
- 
 
         .timer-display.danger {
-
             background: #F8D7DA;
-
             border-color: #DC3545;
-
             color: #721C24;
-
         }
-
- 
 
         @keyframes timerBlink {
-
             0%, 100% { opacity: 1; }
-
             50% { opacity: 0.7; }
-
         }
-
- 
 
         .btn {
-
             background: #FF9900;
-
             color: white;
-
             border: none;
-
             padding: 12px 24px;
-
             border-radius: 25px;
-
             font-size: 1em;
-
             font-weight: bold;
-
             cursor: pointer;
-
             transition: all 0.3s ease;
-
             box-shadow: 0 3px 10px rgba(255, 153, 0, 0.3);
-
         }
-
- 
 
         .btn:hover {
-
             background: #e6850e;
-
             transform: translateY(-2px);
-
             box-shadow: 0 5px 15px rgba(255, 153, 0, 0.4);
-
         }
-
- 
 
         .btn:disabled {
-
             background: #ccc;
-
             cursor: not-allowed;
-
             transform: none;
-
             box-shadow: none;
-
         }
-
- 
 
         .btn.secondary {
-
             background: #6c757d;
-
             box-shadow: 0 3px 10px rgba(108, 117, 125, 0.3);
-
         }
-
- 
 
         .btn.secondary:hover {
-
             background: #5a6268;
-
         }
-
- 
 
         .instruction-panel {
-
             background: linear-gradient(135deg, #FFF8E1 0%, #FFECB3 100%);
-
             padding: 20px;
-
             border-radius: 12px;
-
             margin-bottom: 20px;
-
             border-left: 5px solid #FF9900;
-
             box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-
         }
-
- 
 
         .instruction-panel h3 {
-
             color: #E65100;
-
             margin-bottom: 10px;
-
             font-size: 1.3em;
-
         }
-
- 
 
         .combo-display {
-
             position: fixed;
-
             top: 50%;
-
             left: 50%;
-
             transform: translate(-50%, -50%);
-
             background: #4CAF50;
-
             color: white;
-
             padding: 20px 30px;
-
             border-radius: 15px;
-
             font-size: 2em;
-
             font-weight: bold;
-
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-
             z-index: 1000;
-
             animation: comboAnimation 1s ease-out;
-
             pointer-events: none;
-
         }
-
- 
 
         @keyframes comboAnimation {
-
             0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
-
             50% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
-
             100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-
         }
-
- 
 
         .achievement-popup {
-
             position: fixed;
-
             top: 20px;
-
             right: 20px;
-
             background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
-
             color: white;
-
             padding: 15px 20px;
-
             border-radius: 12px;
-
             box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-
             transform: translateX(100%);
-
             transition: transform 0.4s ease;
-
             z-index: 1000;
-
             max-width: 300px;
-
         }
-
- 
 
         .achievement-popup.show {
-
             transform: translateX(0);
-
         }
-
- 
 
         .achievement-popup h4 {
-
             margin-bottom: 5px;
-
             font-size: 1.1em;
-
         }
-
- 
 
         .leaderboard {
-
             background: #f8f9fa;
-
             padding: 20px;
-
             border-radius: 12px;
-
             margin-top: 20px;
-
         }
-
- 
 
         .leaderboard h3 {
-
             color: #232F3E;
-
             margin-bottom: 15px;
-
             text-align: center;
-
         }
-
- 
 
         .leaderboard-entry {
-
             display: flex;
-
             justify-content: space-between;
-
             align-items: center;
-
             padding: 10px;
-
             background: white;
-
             margin-bottom: 8px;
-
             border-radius: 8px;
-
             border-left: 4px solid #FF9900;
-
         }
-
- 
 
         .rank {
-
             font-weight: bold;
-
             color: #FF9900;
-
             font-size: 1.2em;
-
         }
-
- 
 
         @media (max-width: 768px) {
-
             .stowing-area {
-
                 grid-template-columns: 1fr;
-
             }
-
-           
-
+            
             .pod {
-
                 grid-template-columns: repeat(4, 70px);
-
                 grid-template-rows: repeat(6, 55px);
-
             }
-
-           
-
+            
             .game-controls {
-
                 flex-direction: column;
-
                 align-items: stretch;
-
             }
-
-           
-
+            
             .header h1 {
-
                 font-size: 2em;
-
             }
-
         }
-
     </style>
-
 </head>
-
 <body>
-
     <div class="container">
-
         <div class="header">
-
             <h1>📦 Fulfillment Center Stowing Master</h1>
-
             <p>Train to become an expert Warehouse Associate</p>
-
         </div>
-
- 
 
         <div class="stats-dashboard">
-
             <div class="stat-card">
-
                 <div class="stat-number" id="total-score">0</div>
-
                 <div class="stat-label">Total Score</div>
-
             </div>
-
             <div class="stat-card">
-
                 <div class="stat-number" id="accuracy">100%</div>
-
                 <div class="stat-label">Accuracy</div>
-
             </div>
-
             <div class="stat-card">
-
                 <div class="stat-number" id="items-stowed">0</div>
-
                 <div class="stat-label">Items Stowed</div>
-
             </div>
-
             <div class="stat-card">
-
                 <div class="stat-number" id="best-combo">0</div>
-
                 <div class="stat-label">Best Combo</div>
-
             </div>
-
         </div>
-
- 
 
         <div class="game-area">
-
             <div class="game-header">
-
                 <div class="game-title">
-
                     🎯 Stowing Challenge
-
                 </div>
-
- 
-
+                <div class="difficulty-selector">
+                    <button class="difficulty-btn active" onclick="setDifficulty('easy')">Easy</button>
+                    <button class="difficulty-btn" onclick="setDifficulty('medium')">Medium</button>
+                    <button class="difficulty-btn" onclick="setDifficulty('complex')">Complex</button>
+                </div>
             </div>
-
- 
 
             <div class="instruction-panel">
-
                 <h3 id="current-instruction">🚀 Click START to begin your shift or TRY DEMO to practice!</h3>
-
                 <div id="game-instructions" style="margin-top: 15px; display: block;">
-
                     <h4 style="color: #E65100; margin-bottom: 10px;">📋 How to Play:</h4>
-
                     <ul style="color: #666; line-height: 1.6; margin-left: 20px;">
-
                         <li><strong>Watch the Conveyor:</strong> Products will move across the belt showing their name and SKU code</li>
-
                         <li><strong>Find the Target Bin:</strong> The correct storage bin will be highlighted in orange and pulsing</li>
-
                         <li><strong>Click to Stow:</strong> Click the highlighted bin to store the product correctly</li>
-
                         <li><strong>Build Combos:</strong> Consecutive correct stows increase your score multiplier</li>
-
                         <li><strong>Demo Mode:</strong> Practice without affecting your scores - perfect for learning!</li>
-
                         <li><strong>Challenge Mode:</strong> Complete 5 challenges per difficulty level to earn points</li>
-
                     </ul>
-
                 </div>
-
             </div>
-
- 
 
             <div class="stowing-area">
-
                 <div>
-
                     <div class="conveyor-belt" id="conveyor-belt">
-
-                        <!-- Products will appear here -->
-
-                    </div>
-
+                        </div>
                     <div class="timer-display" id="timer-display">Ready to Start</div>
-
                 </div>
-
- 
 
                 <div class="pod-container">
-
                     <div class="pod" id="main-pod"></div>
-
                 </div>
-
             </div>
-
- 
 
             <div class="game-controls">
-
                 <button class="btn" id="start-btn" onclick="startGame()">🚀 START SHIFT</button>
-
                 <button class="btn secondary" onclick="pauseGame()" id="pause-btn" disabled>⏸️ PAUSE</button>
-
                 <button class="btn" id="demo-btn" onclick="startDemo()">🎮 TRY DEMO</button>
-
             </div>
-
         </div>
-
- 
-
- 
-
     </div>
-
- 
 
     <div class="combo-display" id="combo-display" style="display: none;"></div>
-
     <div class="achievement-popup" id="achievement-popup">
-
         <h4 id="achievement-title"></h4>
-
         <div id="achievement-text"></div>
-
     </div>
 
- 
-
     <script>
-
         // Game state
-
         let gameState = {
-
             isActive: false,
-
             isPaused: false,
-
             score: 0,
-
             accuracy: 100,
-
             itemsStowed: 0,
-
             correctStows: 0,
-
             totalAttempts: 0,
-
             combo: 0,
-
             bestCombo: 0,
-
-            timeLeft: 300, // 5 minute shift
-
             difficulty: 'easy',
-
             currentProduct: null,
-
             targetBin: null,
-
             challengesCompleted: 0,
-
             totalChallenges: 5,
-
             isDemo: false
-
         };
 
- 
-
         // Product database with various retail products
-
         const products = [
-
             { emoji: '📱', name: 'iPhone 15 Pro', id: 'SKU-EL001', category: 'Electronics' },
-
             { emoji: '💻', name: 'MacBook Air M2', id: 'SKU-EL002', category: 'Electronics' },
-
             { emoji: '🎧', name: 'Wireless Earbuds', id: 'SKU-EL003', category: 'Electronics' },
-
             { emoji: '📚', name: 'Atomic Habits Book', id: 'SKU-BK001', category: 'Books' },
-
             { emoji: '👕', name: 'Athletic T-Shirt', id: 'SKU-CL001', category: 'Clothing' },
-
             { emoji: '👟', name: 'Running Shoes', id: 'SKU-SH001', category: 'Shoes' },
-
             { emoji: '🧴', name: 'Face Cleanser', id: 'SKU-BT001', category: 'Beauty' },
-
             { emoji: '☕', name: 'Coffee Maker', id: 'SKU-KT001', category: 'Kitchen' },
-
             { emoji: '🎮', name: 'Gaming Controller', id: 'SKU-GM001', category: 'Gaming' },
-
             { emoji: '📺', name: 'Streaming Device', id: 'SKU-EL004', category: 'Electronics' },
-
             { emoji: '🏠', name: 'Smart Speaker', id: 'SKU-SM001', category: 'Smart Home' },
-
             { emoji: '🧸', name: 'Teddy Bear Plush', id: 'SKU-TY001', category: 'Toys' },
-
             { emoji: '💊', name: 'Vitamin Gummies', id: 'SKU-HT001', category: 'Health' },
-
             { emoji: '🔋', name: 'Portable Charger', id: 'SKU-EL005', category: 'Electronics' },
-
             { emoji: '🎒', name: 'Travel Backpack', id: 'SKU-BG001', category: 'Bags' },
-
             { emoji: '🍳', name: 'Cast Iron Skillet', id: 'SKU-KT002', category: 'Kitchen' },
-
             { emoji: '🧽', name: 'Cleaning Sponge', id: 'SKU-CL002', category: 'Cleaning' },
-
             { emoji: '🕯️', name: 'Scented Candle', id: 'SKU-HM001', category: 'Home' },
-
             { emoji: '🏋️', name: 'Resistance Bands', id: 'SKU-FT001', category: 'Fitness' },
-
             { emoji: '🧊', name: 'Insulated Tumbler', id: 'SKU-DR001', category: 'Drinkware' }
-
         ];
 
- 
-
         const rows = ['F', 'E', 'D', 'C', 'B', 'A'];
-
         const cols = [1, 2, 3, 4];
 
- 
-
         let gameTimer;
-
         let productTimer;
 
- 
-
         function initializeGame() {
-
             createPod();
-
             populateRandomBins();
-
             updateStats();
-
         }
-
- 
 
         function createPod() {
-
             const pod = document.getElementById('main-pod');
-
             pod.innerHTML = '';
-
-           
-
+            
             rows.forEach(row => {
-
                 cols.forEach(col => {
-
                     const bin = document.createElement('div');
-
                     bin.className = 'bin';
-
                     bin.id = `bin-${row}${col}`;
-
                     bin.onclick = () => handleBinClick(row + col);
-
-                   
-
+                    
                     const label = document.createElement('div');
-
                     label.className = 'bin-label';
-
                     label.textContent = `${row}${col}`;
-
-                   
-
+                    
                     const content = document.createElement('div');
-
                     content.className = 'bin-content';
-
-                   
-
+                    
                     bin.appendChild(label);
-
                     bin.appendChild(content);
-
                     pod.appendChild(bin);
-
                 });
-
             });
-
         }
-
- 
 
         function populateRandomBins() {
-
             const bins = document.querySelectorAll('.bin');
-
             bins.forEach(bin => {
-
                 bin.classList.remove('occupied');
-
                 bin.querySelector('.bin-content').textContent = '';
-
             });
-
-           
-
-            // Add some occupied bins with random products
-
+            
             const occupiedCount = Math.floor(Math.random() * 8) + 4;
-
             const randomBins = Array.from(bins).sort(() => 0.5 - Math.random()).slice(0, occupiedCount);
-
-           
-
+            
             randomBins.forEach(bin => {
-
                 bin.classList.add('occupied');
-
                 const randomProduct = products[Math.floor(Math.random() * products.length)];
-
                 bin.querySelector('.bin-content').textContent = randomProduct.emoji;
-
             });
-
         }
 
- 
-
- 
-
- 
+        function setDifficulty(level) {
+            gameState.difficulty = level;
+            document.querySelectorAll('.difficulty-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`.difficulty-btn[onclick="setDifficulty('${level}')"]`).classList.add('active');
+            
+            gameState.totalChallenges = 5;
+            gameState.challengesCompleted = 0;
+            
+            if (!gameState.isActive) {
+                document.getElementById('timer-display').textContent = `Challenge 1 of 5`;
+            }
+        }
 
         function startGame() {
-
             gameState.isActive = true;
-
             gameState.isPaused = false;
-
             gameState.isDemo = false;
-
             gameState.challengesCompleted = 0;
-
-            gameState.timeLeft = 300; // Reset to 5 minutes
-
-            // Reset scores when starting actual challenge
-
+            
             gameState.score = 0;
-
             gameState.accuracy = 100;
-
             gameState.itemsStowed = 0;
-
             gameState.correctStows = 0;
-
             gameState.totalAttempts = 0;
-
             gameState.combo = 0;
-
             gameState.bestCombo = 0;
-
-           
+            gameState.difficulty = 'easy';
+            setDifficulty('easy');
 
             document.getElementById('start-btn').disabled = true;
-
             document.getElementById('pause-btn').disabled = false;
-
             document.getElementById('demo-btn').disabled = true;
-
             document.getElementById('current-instruction').textContent = '👀 Watch for products on the conveyor belt and stow them in the highlighted bins!';
-
             document.getElementById('game-instructions').style.display = 'none';
-
-           
-
+            document.getElementById('timer-display').textContent = `Easy Challenge 1 of 5`;
+            
             updateStats();
-
-            startTimer();
-
             scheduleNextProduct();
-
         }
-
- 
 
         function startDemo() {
-
             gameState.isActive = true;
-
             gameState.isPaused = false;
-
             gameState.isDemo = true;
-
             gameState.challengesCompleted = 0;
-
-           
-
+            
             document.getElementById('start-btn').disabled = true;
-
             document.getElementById('pause-btn').disabled = false;
-
             document.getElementById('demo-btn').disabled = true;
-
             document.getElementById('current-instruction').textContent = '🎮 DEMO MODE - Practice stowing without affecting your scores!';
-
             document.getElementById('game-instructions').style.display = 'none';
-
             document.getElementById('timer-display').textContent = 'DEMO MODE';
-
-           
-
+            
             scheduleNextProduct();
-
         }
-
- 
-
-        function startTimer() {
-
-            updateTimerDisplay();
-
-            gameTimer = setInterval(() => {
-
-                if (!gameState.isPaused && gameState.isActive && !gameState.isDemo) {
-
-                    gameState.timeLeft--;
-
-                    updateTimerDisplay();
-
-                   
-
-                    if (gameState.timeLeft <= 0) {
-
-                        endGame();
-
-                    }
-
-                }
-
-            }, 1000);
-
-        }
-
- 
-
-        function updateTimerDisplay() {
-
-            const timerDisplay = document.getElementById('timer-display');
-
-            const minutes = Math.floor(gameState.timeLeft / 60);
-
-            const seconds = gameState.timeLeft % 60;
-
-            const timeString = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-
-           
-
-            timerDisplay.textContent = `Shift Time: ${timeString}`;
-
-           
-
-            // Change color based on time remaining
-
-            if (gameState.timeLeft <= 30) {
-
-                timerDisplay.className = 'timer-display danger';
-
-            } else if (gameState.timeLeft <= 60) {
-
-                timerDisplay.className = 'timer-display warning';
-
-            } else {
-
-                timerDisplay.className = 'timer-display';
-
-            }
-
-        }
-
- 
 
         function pauseGame() {
-
             gameState.isPaused = !gameState.isPaused;
-
             const pauseBtn = document.getElementById('pause-btn');
-
-           
-
+            
             if (gameState.isPaused) {
-
                 pauseBtn.textContent = '▶️ RESUME';
-
                 clearTimeout(productTimer);
-
                 document.getElementById('current-instruction').textContent = '⏸️ Game Paused - Click RESUME to continue';
-
             } else {
-
                 pauseBtn.textContent = '⏸️ PAUSE';
-
                 scheduleNextProduct();
-
                 const modeText = gameState.isDemo ? '🎮 DEMO MODE - Practice stowing without affecting your scores!' : '👀 Watch for products on the conveyor belt and stow them in the highlighted bins!';
-
                 document.getElementById('current-instruction').textContent = modeText;
-
                 document.getElementById('game-instructions').style.display = 'none';
-
             }
-
         }
-
- 
 
         function resetToStart() {
-
             gameState.isActive = false;
-
             gameState.isPaused = false;
-
             gameState.isDemo = false;
-
             gameState.challengesCompleted = 0;
-
-            gameState.timeLeft = 300;
-
-           
-
-            clearInterval(gameTimer);
-
+            
+            clearTimeout(gameTimer);
             clearTimeout(productTimer);
-
-           
-
+            
             document.getElementById('start-btn').disabled = false;
-
             document.getElementById('pause-btn').disabled = true;
-
             document.getElementById('demo-btn').disabled = false;
-
             document.getElementById('pause-btn').textContent = '⏸️ PAUSE';
-
-            document.getElementById('timer-display').textContent = 'Ready to Start';
-
+            document.getElementById('timer-display').textContent = `Ready to Start`;
             document.getElementById('timer-display').className = 'timer-display';
-
             document.getElementById('current-instruction').textContent = '🚀 Click START to begin your shift or TRY DEMO to practice!';
-
             document.getElementById('game-instructions').style.display = 'block';
-
-           
-
-            // Clear conveyor belt
-
+            
             document.getElementById('conveyor-belt').innerHTML = '';
-
-           
-
-            // Reset bins
-
+            
             document.querySelectorAll('.bin').forEach(bin => {
-
                 bin.classList.remove('target', 'correct', 'incorrect');
-
             });
-
-           
-
+            
             populateRandomBins();
-
         }
 
- 
+        function updateChallengeDisplay() {
+            const timerDisplay = document.getElementById('timer-display');
+            let difficultyText = '';
+            if (gameState.difficulty === 'easy') difficultyText = 'Easy';
+            else if (gameState.difficulty === 'medium') difficultyText = 'Medium';
+            else if (gameState.difficulty === 'complex') difficultyText = 'Complex';
 
- 
-
- 
+            timerDisplay.textContent = `${difficultyText} Challenge ${gameState.challengesCompleted} of ${gameState.totalChallenges}`;
+            timerDisplay.className = 'timer-display';
+        }
 
         function scheduleNextProduct() {
-
             if (!gameState.isActive || gameState.isPaused) return;
 
-           
-
-            // Continue showing products until time runs out (or indefinitely in demo mode)
-
-            const delay = 3000;
-
-           
-
-            productTimer = setTimeout(() => {
-
-                showProduct();
-
-            }, delay);
-
-        }
-
- 
-
-        function showProduct() {
-
-            if (!gameState.isActive || gameState.isPaused) return;
-
-           
-
-            // Clear previous product and target
-
-            document.getElementById('conveyor-belt').innerHTML = '';
-
-            document.querySelectorAll('.bin').forEach(bin => {
-
-                bin.classList.remove('target');
-
-            });
-
-           
-
-            // Select random product and target bin
-
-            gameState.currentProduct = products[Math.floor(Math.random() * products.length)];
-
-            gameState.targetBin = rows[Math.floor(Math.random() * rows.length)] +
-
-                                 cols[Math.floor(Math.random() * cols.length)];
-
-           
-
-            // Create product element
-
-            const productElement = document.createElement('div');
-
-            productElement.className = 'product-item';
-
-            productElement.innerHTML = `
-
-                <div class="product-emoji">${gameState.currentProduct.emoji}</div>
-
-                <div class="product-info">
-
-                    <div class="product-name">${gameState.currentProduct.name}</div>
-
-                    <div class="product-id">${gameState.currentProduct.id}</div>
-
-                </div>
-
-            `;
-
-           
-
-            document.getElementById('conveyor-belt').appendChild(productElement);
-
-           
-
-            // Highlight target bin
-
-            document.getElementById(`bin-${gameState.targetBin}`).classList.add('target');
-
-           
-
-            // Update instruction
-
-            document.getElementById('current-instruction').textContent =
-
-                `📦 Stow ${gameState.currentProduct.name} in bin ${gameState.targetBin}`;
-
-        }
-
- 
-
-        function handleBinClick(binId) {
-
-            if (!gameState.isActive || gameState.isPaused || !gameState.currentProduct) return;
-
-           
-
-            const bin = document.getElementById(`bin-${binId}`);
-
-           
-
-            if (binId === gameState.targetBin) {
-
-                // Correct stow
-
-                bin.classList.add('correct');
-
-               
-
-                // Only update stats if not in demo mode
-
-                if (!gameState.isDemo) {
-
-                    gameState.totalAttempts++;
-
-                    gameState.correctStows++;
-
-                    gameState.itemsStowed++;
-
-                    gameState.combo++;
-
-                   
-
-                    // Calculate score based on combo
-
-                    let points = 15;
-
-                    if (gameState.combo > 1) {
-
-                        points += gameState.combo * 2;
-
-                    }
-
-                    gameState.score += points;
-
-                   
-
-                    // Check for combo milestones
-
-                    if (gameState.combo > gameState.bestCombo) {
-
-                        gameState.bestCombo = gameState.combo;
-
-                    }
-
-                   
-
-                    if (gameState.combo === 3) {
-
-                        showCombo('3x COMBO!');
-
-                        showAchievement('Getting Hot', 'Hit a 3x combo streak!');
-
-                    } else if (gameState.combo === 5) {
-
-                        showCombo('PERFECT!');
-
-                        showAchievement('Stowing Master', 'Perfect 5x combo streak!');
-
-                    }
-
-                   
-
-                    // Update accuracy
-
-                    gameState.accuracy = Math.round((gameState.correctStows / gameState.totalAttempts) * 100);
-
-                    updateStats();
-
+            // Handle end-of-challenge transitions
+            if (gameState.challengesCompleted === gameState.totalChallenges && !gameState.isDemo) {
+                if (gameState.difficulty === 'easy') {
+                    gameState.difficulty = 'medium';
+                    gameState.challengesCompleted = 0;
+                    showAchievement('Difficulty Up!', 'You\'ve unlocked the Medium challenge!');
+                    document.getElementById('current-instruction').textContent = 'Moving to the next level: Medium Challenge!';
+                    setDifficulty('medium');
+                } else if (gameState.difficulty === 'medium') {
+                    gameState.difficulty = 'complex';
+                    gameState.challengesCompleted = 0;
+                    showAchievement('Going Pro!', 'The Complex challenge awaits you!');
+                    document.getElementById('current-instruction').textContent = 'Final challenge unlocked: The Complex level!';
+                    setDifficulty('complex');
+                } else {
+                    endGame();
+                    return;
                 }
-
-               
-
-                // Add product to bin
-
-                bin.querySelector('.bin-content').textContent = gameState.currentProduct.emoji;
-
-                bin.classList.add('occupied');
-
-               
-
-                setTimeout(() => {
-
-                    bin.classList.remove('correct', 'target');
-
-                    // Schedule next product after successful stow
-
-                    scheduleNextProduct();
-
-                }, 1000);
-
-               
-
-            } else {
-
-                // Incorrect stow
-
-                bin.classList.add('incorrect');
-
-               
-
-                // Only update stats if not in demo mode
-
-                if (!gameState.isDemo) {
-
-                    gameState.totalAttempts++;
-
-                    gameState.combo = 0;
-
-                    gameState.accuracy = Math.round((gameState.correctStows / gameState.totalAttempts) * 100);
-
-                    updateStats();
-
-                }
-
-               
-
-                setTimeout(() => {
-
-                    bin.classList.remove('incorrect');
-
-                    // Schedule next product after incorrect attempt
-
-                    scheduleNextProduct();
-
-                }, 1000);
-
             }
 
-           
-
-            // Clear current product
-
-            gameState.currentProduct = null;
-
-            gameState.targetBin = null;
-
+            const delay = gameState.difficulty === 'easy' ? 4000 : gameState.difficulty === 'medium' ? 3000 : 2000;
+            productTimer = setTimeout(showProduct, delay);
         }
 
- 
+        function showProduct() {
+            if (!gameState.isActive || gameState.isPaused) return;
+            
+            document.getElementById('conveyor-belt').innerHTML = '';
+            document.querySelectorAll('.bin').forEach(bin => {
+                bin.classList.remove('target');
+            });
+            
+            gameState.currentProduct = products[Math.floor(Math.random() * products.length)];
+            gameState.targetBin = rows[Math.floor(Math.random() * rows.length)] +
+                                 cols[Math.floor(Math.random() * cols.length)];
+            
+            const productElement = document.createElement('div');
+            productElement.className = 'product-item';
+            
+            let animationDuration = gameState.difficulty === 'easy' ? '8s' : gameState.difficulty === 'medium' ? '6s' : '4s';
+            productElement.style.animationDuration = animationDuration;
+
+            productElement.innerHTML = `
+                <div class="product-emoji">${gameState.currentProduct.emoji}</div>
+                <div class="product-info">
+                    <div class="product-name">${gameState.currentProduct.name}</div>
+                    <div class="product-id">${gameState.currentProduct.id}</div>
+                </div>
+            `;
+            
+            document.getElementById('conveyor-belt').appendChild(productElement);
+            
+            document.getElementById(`bin-${gameState.targetBin}`).classList.add('target');
+            
+            document.getElementById('current-instruction').textContent =
+                `📦 Stow ${gameState.currentProduct.name} in bin ${gameState.targetBin}`;
+        }
+
+        function handleBinClick(binId) {
+            if (!gameState.isActive || gameState.isPaused || !gameState.currentProduct) return;
+            
+            const bin = document.getElementById(`bin-${binId}`);
+            
+            if (binId === gameState.targetBin) {
+                bin.classList.add('correct');
+                
+                if (!gameState.isDemo) {
+                    gameState.totalAttempts++;
+                    gameState.correctStows++;
+                    gameState.itemsStowed++;
+                    gameState.combo++;
+                    
+                    let points = gameState.difficulty === 'easy' ? 10 : gameState.difficulty === 'medium' ? 15 : 25;
+                    if (gameState.combo > 1) {
+                        points += gameState.combo * 2;
+                    }
+                    gameState.score += points;
+                    
+                    if (gameState.combo > gameState.bestCombo) {
+                        gameState.bestCombo = gameState.combo;
+                    }
+                    
+                    if (gameState.combo === 3) {
+                        showCombo('3x COMBO!');
+                        showAchievement('Getting Hot', 'Hit a 3x combo streak!');
+                    } else if (gameState.combo === 5) {
+                        showCombo('PERFECT!');
+                        showAchievement('Stowing Master', 'Perfect 5x combo!');
+                    }
+                    
+                    gameState.accuracy = Math.round((gameState.correctStows / gameState.totalAttempts) * 100);
+                    
+                    // Increment challengesCompleted only for correct stows
+                    gameState.challengesCompleted++;
+                    updateStats();
+                    updateChallengeDisplay();
+                }
+                
+                bin.querySelector('.bin-content').textContent = gameState.currentProduct.emoji;
+                bin.classList.add('occupied');
+                
+                setTimeout(() => {
+                    bin.classList.remove('correct', 'target');
+                    scheduleNextProduct();
+                }, 1000);
+                
+            } else {
+                bin.classList.add('incorrect');
+                
+                if (!gameState.isDemo) {
+                    gameState.totalAttempts++;
+                    gameState.combo = 0;
+                    gameState.accuracy = Math.round((gameState.correctStows / gameState.totalAttempts) * 100);
+                    updateStats();
+                }
+                
+                setTimeout(() => {
+                    bin.classList.remove('incorrect');
+                    scheduleNextProduct();
+                }, 1000);
+            }
+            
+            gameState.currentProduct = null;
+            gameState.targetBin = null;
+        }
 
         function showCombo(text) {
-
             const comboDisplay = document.getElementById('combo-display');
-
             comboDisplay.textContent = text;
-
             comboDisplay.style.display = 'block';
-
-           
-
+            
             setTimeout(() => {
-
                 comboDisplay.style.display = 'none';
-
             }, 1500);
-
         }
-
- 
 
         function showAchievement(title, text) {
-
             const popup = document.getElementById('achievement-popup');
-
             document.getElementById('achievement-title').textContent = title;
-
             document.getElementById('achievement-text').textContent = text;
-
-           
-
+            
             popup.classList.add('show');
-
             setTimeout(() => {
-
                 popup.classList.remove('show');
-
             }, 4000);
-
         }
-
- 
 
         function updateStats() {
-
             document.getElementById('total-score').textContent = gameState.score.toLocaleString();
-
             document.getElementById('accuracy').textContent = gameState.accuracy + '%';
-
             document.getElementById('items-stowed').textContent = gameState.itemsStowed;
-
             document.getElementById('best-combo').textContent = gameState.bestCombo;
-
         }
-
- 
 
         function endGame() {
-
             gameState.isActive = false;
-
-            clearInterval(gameTimer);
-
+            clearTimeout(gameTimer);
             clearTimeout(productTimer);
-
-           
-
+            
             document.getElementById('start-btn').disabled = false;
-
             document.getElementById('pause-btn').disabled = true;
-
             document.getElementById('demo-btn').disabled = false;
-
-            document.getElementById('timer-display').textContent = 'SHIFT COMPLETE!';
-
+            document.getElementById('timer-display').textContent = 'ALL CHALLENGES COMPLETE!';
             document.getElementById('timer-display').className = 'timer-display';
-
-           
-
-            // Show final results
-
+            
             let performance = 'Good job!';
-
             if (gameState.accuracy === 100) performance = 'Perfect performance!';
-
             else if (gameState.accuracy >= 80) performance = 'Excellent work!';
-
             else if (gameState.accuracy >= 60) performance = 'Great effort!';
-
             else performance = 'Keep practicing!';
-
-           
-
+            
             document.getElementById('current-instruction').textContent =
-
-                `🎉 Shift Complete! ${performance} Final Score: ${gameState.score.toLocaleString()} | Items Stowed: ${gameState.itemsStowed} | Accuracy: ${gameState.accuracy}%`;
-
-           
-
-            showAchievement('Shift Complete', `You stowed ${gameState.itemsStowed} items with ${gameState.accuracy}% accuracy!`);
-
-           
-
-            // Auto-reset after 5 seconds
-
+                `🎉 All 3 levels Complete! ${performance} Final Score: ${gameState.score.toLocaleString()} | Accuracy: ${gameState.accuracy}%`;
+            
+            showAchievement('Training Complete', `You completed all challenges with ${gameState.accuracy}% accuracy!`);
+            
             setTimeout(() => {
-
                 resetToStart();
-
             }, 5000);
-
         }
 
- 
-
-        // Initialize the game when page loads
-
         initializeGame();
-
     </script>
-
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9810eb749140ee9d',t:'MTc1ODE5OTMwOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
-
+</body>
 </html>
