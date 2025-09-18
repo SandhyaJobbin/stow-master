@@ -207,45 +207,7 @@
 
  
 
-        .difficulty-selector {
-
-            display: flex;
-
-            gap: 10px;
-
-        }
-
  
-
-        .difficulty-btn {
-
-            padding: 8px 16px;
-
-            border: 2px solid #FF9900;
-
-            background: white;
-
-            color: #FF9900;
-
-            border-radius: 20px;
-
-            cursor: pointer;
-
-            transition: all 0.3s ease;
-
-            font-weight: bold;
-
-        }
-
- 
-
-        .difficulty-btn.active {
-
-            background: #FF9900;
-
-            color: white;
-
-        }
 
  
 
@@ -975,15 +937,7 @@
 
                 </div>
 
-                <div class="difficulty-selector">
-
-                    <button class="difficulty-btn active" onclick="setDifficulty('easy')">Easy</button>
-
-                    <button class="difficulty-btn" onclick="setDifficulty('medium')">Medium</button>
-
-                    <button class="difficulty-btn" onclick="setDifficulty('complex')">Complex</button>
-
-                </div>
+ 
 
             </div>
 
@@ -1101,7 +1055,7 @@
 
             bestCombo: 0,
 
-            timeLeft: 120,
+            timeLeft: 300, // 5 minute shift
 
             difficulty: 'easy',
 
@@ -1277,31 +1231,7 @@
 
  
 
-        function setDifficulty(level) {
-
-            gameState.difficulty = level;
-
-            document.querySelectorAll('.difficulty-btn').forEach(btn => btn.classList.remove('active'));
-
-            event.target.classList.add('active');
-
-           
-
-            // All difficulty levels have 5 challenges
-
-            gameState.totalChallenges = 5;
-
-            gameState.challengesCompleted = 0;
-
-           
-
-            if (!gameState.isActive) {
-
-                document.getElementById('timer-display').textContent = `Challenge 1 of 5`;
-
-            }
-
-        }
+ 
 
  
 
@@ -1314,6 +1244,8 @@
             gameState.isDemo = false;
 
             gameState.challengesCompleted = 0;
+
+            gameState.timeLeft = 300; // Reset to 5 minutes
 
             // Reset scores when starting actual challenge
 
@@ -1343,11 +1275,11 @@
 
             document.getElementById('game-instructions').style.display = 'none';
 
-            document.getElementById('timer-display').textContent = `Challenge 1 of ${gameState.totalChallenges}`;
-
            
 
             updateStats();
+
+            startTimer();
 
             scheduleNextProduct();
 
@@ -1382,6 +1314,70 @@
            
 
             scheduleNextProduct();
+
+        }
+
+ 
+
+        function startTimer() {
+
+            updateTimerDisplay();
+
+            gameTimer = setInterval(() => {
+
+                if (!gameState.isPaused && gameState.isActive && !gameState.isDemo) {
+
+                    gameState.timeLeft--;
+
+                    updateTimerDisplay();
+
+                   
+
+                    if (gameState.timeLeft <= 0) {
+
+                        endGame();
+
+                    }
+
+                }
+
+            }, 1000);
+
+        }
+
+ 
+
+        function updateTimerDisplay() {
+
+            const timerDisplay = document.getElementById('timer-display');
+
+            const minutes = Math.floor(gameState.timeLeft / 60);
+
+            const seconds = gameState.timeLeft % 60;
+
+            const timeString = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+           
+
+            timerDisplay.textContent = `Shift Time: ${timeString}`;
+
+           
+
+            // Change color based on time remaining
+
+            if (gameState.timeLeft <= 30) {
+
+                timerDisplay.className = 'timer-display danger';
+
+            } else if (gameState.timeLeft <= 60) {
+
+                timerDisplay.className = 'timer-display warning';
+
+            } else {
+
+                timerDisplay.className = 'timer-display';
+
+            }
 
         }
 
@@ -1431,9 +1427,11 @@
 
             gameState.challengesCompleted = 0;
 
+            gameState.timeLeft = 300;
+
            
 
-            clearTimeout(gameTimer);
+            clearInterval(gameTimer);
 
             clearTimeout(productTimer);
 
@@ -1447,7 +1445,7 @@
 
             document.getElementById('pause-btn').textContent = '⏸️ PAUSE';
 
-            document.getElementById('timer-display').textContent = `Challenge 1 of 5`;
+            document.getElementById('timer-display').textContent = 'Ready to Start';
 
             document.getElementById('timer-display').className = 'timer-display';
 
@@ -1479,15 +1477,7 @@
 
  
 
-        function updateChallengeDisplay() {
-
-            const timerDisplay = document.getElementById('timer-display');
-
-            timerDisplay.textContent = `Challenge ${gameState.challengesCompleted + 1} of ${gameState.totalChallenges}`;
-
-            timerDisplay.className = 'timer-display';
-
-        }
+ 
 
  
 
@@ -1497,39 +1487,9 @@
 
            
 
-            // In demo mode, continue indefinitely
+            // Continue showing products until time runs out (or indefinitely in demo mode)
 
-            if (gameState.isDemo) {
-
-                const delay = gameState.difficulty === 'easy' ? 4000 : gameState.difficulty === 'medium' ? 3000 : 2000;
-
-               
-
-                productTimer = setTimeout(() => {
-
-                    showProduct();
-
-                }, delay);
-
-                return;
-
-            }
-
-           
-
-            // Check if all challenges are completed (only in challenge mode)
-
-            if (gameState.challengesCompleted >= gameState.totalChallenges) {
-
-                endGame();
-
-                return;
-
-            }
-
-           
-
-            const delay = gameState.difficulty === 'easy' ? 4000 : gameState.difficulty === 'medium' ? 3000 : 2000;
+            const delay = 3000;
 
            
 
@@ -1643,13 +1603,11 @@
 
                     gameState.combo++;
 
-                    gameState.challengesCompleted++;
-
                    
 
-                    // Calculate score based on difficulty and combo
+                    // Calculate score based on combo
 
-                    let points = gameState.difficulty === 'easy' ? 10 : gameState.difficulty === 'medium' ? 15 : 25;
+                    let points = 15;
 
                     if (gameState.combo > 1) {
 
@@ -1681,7 +1639,7 @@
 
                         showCombo('PERFECT!');
 
-                        showAchievement('Stowing Master', 'Perfect 5x combo - All challenges completed flawlessly!');
+                        showAchievement('Stowing Master', 'Perfect 5x combo streak!');
 
                     }
 
@@ -1711,17 +1669,7 @@
 
                     // Schedule next product after successful stow
 
-                    if (gameState.isDemo || gameState.challengesCompleted < gameState.totalChallenges) {
-
-                        if (!gameState.isDemo) {
-
-                            updateChallengeDisplay();
-
-                        }
-
-                        scheduleNextProduct();
-
-                    }
+                    scheduleNextProduct();
 
                 }, 1000);
 
@@ -1757,11 +1705,7 @@
 
                     // Schedule next product after incorrect attempt
 
-                    if (gameState.isDemo || gameState.challengesCompleted < gameState.totalChallenges) {
-
-                        scheduleNextProduct();
-
-                    }
+                    scheduleNextProduct();
 
                 }, 1000);
 
@@ -1839,7 +1783,7 @@
 
             gameState.isActive = false;
 
-            clearTimeout(gameTimer);
+            clearInterval(gameTimer);
 
             clearTimeout(productTimer);
 
@@ -1851,7 +1795,7 @@
 
             document.getElementById('demo-btn').disabled = false;
 
-            document.getElementById('timer-display').textContent = 'ALL CHALLENGES COMPLETE!';
+            document.getElementById('timer-display').textContent = 'SHIFT COMPLETE!';
 
             document.getElementById('timer-display').className = 'timer-display';
 
@@ -1873,11 +1817,11 @@
 
             document.getElementById('current-instruction').textContent =
 
-                `🎉 All 5 Challenges Complete! ${performance} Final Score: ${gameState.score.toLocaleString()} | Accuracy: ${gameState.accuracy}%`;
+                `🎉 Shift Complete! ${performance} Final Score: ${gameState.score.toLocaleString()} | Items Stowed: ${gameState.itemsStowed} | Accuracy: ${gameState.accuracy}%`;
 
            
 
-            showAchievement('Training Complete', `You completed all 5 challenges with ${gameState.accuracy}% accuracy!`);
+            showAchievement('Shift Complete', `You stowed ${gameState.itemsStowed} items with ${gameState.accuracy}% accuracy!`);
 
            
 
@@ -1899,6 +1843,6 @@
 
     </script>
 
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9810bdb7066dedca',t:'MTc1ODE5NzQzNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9810eb749140ee9d',t:'MTc1ODE5OTMwOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 
 </html>
